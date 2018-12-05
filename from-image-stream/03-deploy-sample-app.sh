@@ -28,5 +28,12 @@ LAST_IMAGE=$(echo ${IMAGE_LIST} | awk '{print $(NF)}')
 IMAGE_NAME=$(echo ${LAST_IMAGE} | awk -F'/' '{print $3}')
 
 oc new-project ${NAMESPACE}
-oc new-app ${LOCAL_IMAGE_STREAM_NAMESPACE}/${IMAGE_NAME}~${GIT_URL} ${CONTEXT_DIR_PARAM} -name ${APP_NAME} -n ${NAMESPACE}
-oc expose ${APP_NAME}
+
+if [ ${LOCAL_IMAGE_STREAM_NAMESPACE} != "openshift" ]; then
+  oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:${NAMESPACE}:default \
+    --namespace=${LOCAL_IMAGE_STREAM_NAMESPACE}
+fi
+
+oc new-app ${LOCAL_IMAGE_STREAM_NAMESPACE}/${IMAGE_NAME}~${GIT_URL} ${CONTEXT_DIR_PARAM} --name ${APP_NAME} -n ${NAMESPACE}
+oc expose svc ${APP_NAME}

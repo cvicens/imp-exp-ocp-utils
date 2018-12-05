@@ -29,12 +29,12 @@ Note: if you can reach the destination cluster from your local machine, there's 
 
 Once in the destination machine, make sure pre-requisites (yq and jq binaries installed and in PATH) are met before going on.
 
-Login as an admin user, then run our `02-push-remote-images.sh` providing the name of the image-stream file and the name of the destination namespace where we want to have our image-stream.
+Login as an admin user, then run our `02-push-remote-images.sh` providing the name of the image-stream file and the name of the destination namespace where we want to have our image-stream (if the namespace is not `openshift` then you have to give permissions to pull images from that namespace).
 
 ```
 oc login https://master.example.com -u admin -p password
 
-./02-push-remote-images.sh redhat-openjdk-image-stream.yaml lab-infra
+./02-push-remote-images.sh redhat-openjdk-image-stream.yaml `lab-infra`
 
 ```
 
@@ -50,5 +50,5 @@ The sample script `./03-deploy-sample-app.sh` will create a new app, given the f
 - [GIT_CONTEXT_DIR]: optionally, context directory where the code is
 
 ```
-./03-deploy-sample-app.sh redhat-openjdk-image-stream.yaml lab-infra tests https://github.com/cvicens/wine pairing
+./03-deploy-sample-app.sh redhat-openjdk-image-stream.yaml lab-infra my-tests my-app https://github.com/cvicens/wine pairing
 ```
