@@ -1,13 +1,14 @@
 #!/bin/sh
 
-if [ "$#" -lt 2 ]; then
-  echo "Usage: $0 NAMESPACE GIT_URL GIT_CONTEXT_DIR" >&2
+if [ "$#" -lt 3 ]; then
+  echo "Usage: $0 FROM_IMAGE_STREAM_FILE NAMESPACE GIT_URL GIT_CONTEXT_DIR" >&2
   exit 1
 fi
 
-NAMESPACE=$1
-GIT_URL=$2
-GIT_CONTEXT_DIR=$3
+FROM_IMAGE_STREAM_FILE=$1
+NAMESPACE=$2
+GIT_URL=$3
+GIT_CONTEXT_DIR=$4
 
 if [ ! -z ${GIT_CONTEXT_DIR} ]; then
 CONTEXT_DIR_PARAM="--context-dir=${GIT_CONTEXT_DIR}"
