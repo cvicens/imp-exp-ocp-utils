@@ -27,5 +27,6 @@ IMAGE_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | yq -r ".spec.tags[] | .from.name")
 LAST_IMAGE=$(echo ${IMAGE_LIST} | awk '{print $(NF)}')
 IMAGE_NAME=$(echo ${LAST_IMAGE} | awk -F'/' '{print $3}')
 
+oc new-project ${NAMESPACE}
 oc new-app ${LOCAL_IMAGE_STREAM_NAMESPACE}/${IMAGE_NAME}~${GIT_URL} ${CONTEXT_DIR_PARAM} -name ${APP_NAME} -n ${NAMESPACE}
 oc expose ${APP_NAME}
