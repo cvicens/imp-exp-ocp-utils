@@ -10,7 +10,7 @@ Use next example to export the image-stream used for JDK S2I
 $ oc get is -n openshift | grep jdk
 redhat-openjdk18-openshift                     docker-registry.default.svc:5000/openshift/redhat-openjdk18-openshift                     1.4,1.0,1.1 + 2 more...      2 days ago
 
-$ oc get is redhat-openjdk18-openshift -n openshift -o yaml > redhat-openjdk-image-stream.yaml
+$ oc get is redhat-openjdk18-openshift -n openshift -o json > redhat-openjdk-image-stream.json
 ```
 
 # Pull remote images from 'source' Openshift instance

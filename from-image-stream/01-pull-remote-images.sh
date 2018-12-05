@@ -1,7 +1,6 @@
 #!/bin/sh
 
 # WATCH OUT!
-# >>> brew install python-yq
 # >>> curl -OL https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && mv jq-linux64 jq && export PATH=$PATH:.
 
 if [ "$#" -ne 1 ]; then
@@ -11,7 +10,7 @@ fi
 
 FROM_IMAGE_STREAM_FILE=$1
 
-IMAGE_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | yq -r ".spec.tags[] | .from.name")
+IMAGE_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.spec.tags[] | select(.from.kind == "DockerImage") | .from.name'
 
 declare -a arr=(${IMAGE_LIST})
 

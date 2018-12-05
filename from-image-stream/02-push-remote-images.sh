@@ -1,7 +1,6 @@
 #!/bin/sh
 
 # WATCH OUT!
-# >>> brew install python-yq
 # >>> curl -OL https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && mv jq-linux64 jq && export PATH=$PATH:.
 
 if [ "$#" -ne 2 ]; then
@@ -34,7 +33,7 @@ oc new-project ${TO_NAMESPACE}
 export REGISTRY_URL=$(oc get routes -n default | grep docker-registry | awk '{print $2}')
 docker login $REGISTRY_URL -u $(oc whoami) -p $(oc whoami -t)
 
-IMAGE_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | yq -r ".spec.tags[] | .from.name")
+IMAGE_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r ".spec.tags[] | .from.name")
 
 declare -a arr=(${IMAGE_LIST})
 
