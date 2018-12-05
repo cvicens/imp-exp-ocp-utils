@@ -23,6 +23,13 @@ if [ -z ${TOKEN} ]; then
   exit 1
 fi
 
+
+_NAMESPACE=$(oc get project ${NAMESPACE} | awk 'NR>1 {print $1}')
+if [ "${_NAMESPACE}" != "${NAMESPACE}" ]; then
+  echo "Please create project ${NAMESPACE} first..."
+  exit 1
+fi
+
 IMAGE_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.spec.tags[] | select(.from.kind == "DockerImage") | .from.name')
 LAST_IMAGE=$(echo ${IMAGE_LIST} | awk '{print $(NF)}')
 IMAGE_NAME=$(echo ${LAST_IMAGE} | awk -F'/' '{print $3}')

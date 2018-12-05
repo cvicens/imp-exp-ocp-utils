@@ -16,7 +16,7 @@ $ oc get is redhat-openjdk18-openshift -n openshift -o json > redhat-openjdk-ima
 # Pull remote images from 'source' Openshift instance
 
 ```
-./01-pull-remote-images.sh redhat-openjdk-image-stream.yaml
+./01-pull-remote-images.sh redhat-openjdk-image-stream.json
 ```
 
 # Copy the zipped files from your local directory to the destination location
@@ -34,7 +34,7 @@ Login as an admin user, then run our `02-push-remote-images.sh` providing the na
 ```
 oc login https://master.example.com -u admin -p password
 
-./02-push-remote-images.sh redhat-openjdk-image-stream.yaml `lab-infra`
+./02-push-remote-images.sh redhat-openjdk-image-stream.json lab-infra
 
 ```
 
@@ -50,5 +50,5 @@ The sample script `./03-deploy-sample-app.sh` will create a new app, given the f
 - [GIT_CONTEXT_DIR]: optionally, context directory where the code is
 
 ```
-./03-deploy-sample-app.sh redhat-openjdk-image-stream.yaml lab-infra my-tests my-app https://github.com/cvicens/wine pairing
+./03-deploy-sample-app.sh redhat-openjdk-image-stream.json lab-infra my-tests my-app https://github.com/cvicens/wine pairing
 ```

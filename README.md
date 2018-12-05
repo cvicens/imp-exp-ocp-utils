@@ -4,12 +4,11 @@ This is just a bunch of sample tools to import export images from one environmen
 
 # Prerequites
 
-Install jq and yq
+Install jq
 
 **Mac OS**
 
 ```
-brew install python-yq
 pip install yq
 ```
 
