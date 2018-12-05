@@ -21,18 +21,34 @@ $ oc get is redhat-openjdk18-openshift -n openshift -o yaml > redhat-openjdk-ima
 
 # Copy the zipped files from your local directory to the destination location
 
-Use whichever means to copy the *.tar.gz files (images) from this local directory to the destination localtion where `oc` command is installed and set up to connect to the destination Openshift installation.
+Use whichever means to copy the image-stream () file along with the *.tar.gz files (images) from this local directory to the destination localtion where `oc` command is installed and set up to connect to the destination Openshift installation.
 
 Note: if you can reach the destination cluster from your local machine, there's no need to copy files anywhere
 
-# Once in the destination machine
+# Push images to the local Openshift registry
 
-Make sure pre-requisites (yq and jq binaries installed and in PATH) are met before going on.
+Once in the destination machine, make sure pre-requisites (yq and jq binaries installed and in PATH) are met before going on.
 
-Login as an admin user.
+Login as an admin user, then run our `02-push-remote-images.sh` providing the name of the image-stream file and the name of the destination namespace where we want to have our image-stream.
 
 ```
 oc login https://master.example.com -u admin -p password
 
+./02-push-remote-images.sh redhat-openjdk-image-stream.yaml lab-infra
+
 ```
 
+# Create a sample app with our new s2i image stream
+
+The sample script `./03-deploy-sample-app.sh` will create a new app, given the following parameters.
+
+- FROM_IMAGE_STREAM_FILE: image-stream file we used to export images
+- LOCAL_IMAGE_STREAM_NAMESPACE: local namespace where we have imported the original images
+- NAMESPACE: namespace where we want to deploy our app
+- APP_NAME: name we want for our app
+- GIT_URL: git repository url
+- [GIT_CONTEXT_DIR]: optionally, context directory where the code is
+
+```
+./03-deploy-sample-app.sh redhat-openjdk-image-stream.yaml lab-infra tests https://github.com/cvicens/wine pairing
+```
