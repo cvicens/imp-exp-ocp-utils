@@ -33,7 +33,7 @@ oc new-project ${TO_NAMESPACE}
 export REGISTRY_URL=$(oc get routes -n default | grep docker-registry | awk '{print $2}')
 docker login $REGISTRY_URL -u $(oc whoami) -p $(oc whoami -t)
 
-IMAGE_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r ".spec.tags[] | .from.name")
+IMAGE_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r ".spec.tags[] | select(.from.kind == "DockerImage") | .from.name")
 
 declare -a arr=(${IMAGE_LIST})
 
