@@ -29,7 +29,7 @@ IMAGE_NAME=$(echo ${LAST_IMAGE} | awk -F'/' '{print $3}')
 
 oc new-project ${NAMESPACE}
 
-if [ ${LOCAL_IMAGE_STREAM_NAMESPACE} != "openshift" ]; then
+if [ "${LOCAL_IMAGE_STREAM_NAMESPACE}" != "openshift" ]; then
   oc policy add-role-to-user \
     system:image-puller system:serviceaccount:${NAMESPACE}:default \
     --namespace=${LOCAL_IMAGE_STREAM_NAMESPACE}
