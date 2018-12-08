@@ -59,8 +59,8 @@ do
    IMAGE_NAME=$(echo $i |base64 --decode | awk -F'/' '{print $3}')
    echo "IMAGE_NAME ${IMAGE_NAME}"
 
-   echo tar zxvf ${FILE_NAME}.tar.gz
-   echo docker load -i ${FILE_NAME}.tar
-   echo docker tag ${FULL_IMAGE_NAME} $REGISTRY_URL/${TO_NAMESPACE}/${IMAGE_STREAM_NAME}:${TAG}
-   echo docker push $REGISTRY_URL/${TO_NAMESPACE}/${IMAGE_STREAM_NAME}:${TAG}
+   tar zxvf ${FILE_NAME}.tar.gz
+   docker load -i ${FILE_NAME}.tar
+   docker tag ${FULL_IMAGE_NAME} $REGISTRY_URL/${TO_NAMESPACE}/${IMAGE_STREAM_NAME}:${TAG}
+   docker push $REGISTRY_URL/${TO_NAMESPACE}/${IMAGE_STREAM_NAME}:${TAG}
 done
