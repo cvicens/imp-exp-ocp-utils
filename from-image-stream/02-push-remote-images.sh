@@ -33,18 +33,34 @@ oc new-project ${TO_NAMESPACE}
 export REGISTRY_URL=$(oc get routes -n default | grep docker-registry | awk '{print $2}')
 docker login $REGISTRY_URL -u $(oc whoami) -p $(oc whoami -t)
 
+IMAGE_STREAM_NAME=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.metadata.name')
+
 IMAGE_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.spec.tags[] | select(.from.kind == "DockerImage") | .from.name')
 
-declare -a arr=(${IMAGE_LIST})
+IMAGE_OBJ_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.spec.tags[] | select(.from.kind == "DockerImage") | @base64')
+
+declare -a image_arr=(${IMAGE_OBJ_LIST})
+
+echo "image_arr: ${image_arr}"
 
 ## now loop through the above array
-for i in ${arr[@]}
+for i in ${image_arr[@]}
 do
-   echo "Decompressing, saving, compressing $i"
-   FILE_NAME=$(echo $i | sed 's@/@_@g' | sed 's@:@__@g')
-   IMAGE_NAME=$(echo $i | awk -F'/' '{print $3}')
-   tar zxvf ${FILE_NAME}.tar.gz
-   docker load -i ${FILE_NAME}.tar
-   docker tag $i $REGISTRY_URL/${TO_NAMESPACE}/${IMAGE_NAME}
-   docker push $REGISTRY_URL/${TO_NAMESPACE}/${IMAGE_NAME}
+   echo "Decompressing, saving, compressing $(echo $i | base64 --decode)"
+   TAG=$(echo $i | base64 --decode | jq -r '.name')
+   echo "TAG ${TAG}"
+
+   FULL_IMAGE_NAME=$(echo $i | base64 --decode | jq -r '.from.name')
+   echo "FULL_IMAGE_NAME ${FULL_IMAGE_NAME}"
+
+   FILE_NAME=$(echo ${FULL_IMAGE_NAME} | sed 's@/@_@g' | sed 's@:@__@g')
+   echo "FILE_NAME ${FILE_NAME}"
+
+   IMAGE_NAME=$(echo $i |base64 --decode | awk -F'/' '{print $3}')
+   echo "IMAGE_NAME ${IMAGE_NAME}"
+
+   echo tar zxvf ${FILE_NAME}.tar.gz
+   echo docker load -i ${FILE_NAME}.tar
+   echo docker tag ${FULL_IMAGE_NAME} $REGISTRY_URL/${TO_NAMESPACE}/${IMAGE_STREAM_NAME}:${TAG}
+   echo docker push $REGISTRY_URL/${TO_NAMESPACE}/${IMAGE_STREAM_NAME}:${TAG}
 done

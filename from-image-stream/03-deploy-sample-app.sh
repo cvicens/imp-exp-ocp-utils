@@ -23,7 +23,6 @@ if [ -z ${TOKEN} ]; then
   exit 1
 fi
 
-
 _NAMESPACE=$(oc get project ${NAMESPACE} | awk 'NR>1 {print $1}')
 if [ "${_NAMESPACE}" != "${NAMESPACE}" ]; then
   echo "Please create project ${NAMESPACE} first..."
@@ -34,7 +33,9 @@ IMAGE_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.spec.tags[] | select(.from.
 LAST_IMAGE=$(echo ${IMAGE_LIST} | awk '{print $(NF)}')
 IMAGE_NAME=$(echo ${LAST_IMAGE} | awk -F'/' '{print $3}')
 
-oc new-project ${NAMESPACE}
+oc new-app ${LOCAL_IMAGE_STREAM_NAMESPACE}/${IMAGE_NAME}~${GIT_URL} ${CONTEXT_DIR_PARAM} --name ${APP_NAME} -n ${NAMESPACE}
+oc expose svc ${APP_NAME}
+oc rollout pause dc ${APP_NAME}
 
 if [ "${LOCAL_IMAGE_STREAM_NAMESPACE}" != "openshift" ]; then
   oc policy add-role-to-user \
@@ -42,5 +43,4 @@ if [ "${LOCAL_IMAGE_STREAM_NAMESPACE}" != "openshift" ]; then
     --namespace=${LOCAL_IMAGE_STREAM_NAMESPACE}
 fi
 
-oc new-app ${LOCAL_IMAGE_STREAM_NAMESPACE}/${IMAGE_NAME}~${GIT_URL} ${CONTEXT_DIR_PARAM} --name ${APP_NAME} -n ${NAMESPACE}
-oc expose svc ${APP_NAME}
+oc rollout resume dc nexus3
