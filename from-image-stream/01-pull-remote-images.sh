@@ -10,7 +10,7 @@ fi
 
 FROM_IMAGE_STREAM_FILE=$1
 
-IMAGE_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.spec.tags[] | select(.from.kind == "DockerImage") | .from.name'
+IMAGE_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.spec.tags[] | select(.from.kind == "DockerImage") | .from.name)'
 
 declare -a arr=(${IMAGE_LIST})
 
