@@ -56,7 +56,7 @@ do
    FILE_NAME=$(echo ${FULL_IMAGE_NAME} | sed 's@/@_@g' | sed 's@:@__@g')
    echo "FILE_NAME ${FILE_NAME}"
 
-   IMAGE_NAME=$(echo $i |base64 --decode | awk -F'/' '{print $3}')
+   IMAGE_NAME=$(echo ${FULL_IMAGE_NAME} |base64 --decode | awk -F'/' '{print $3}')
    echo "IMAGE_NAME ${IMAGE_NAME}"
 
    tar zxvf ${FILE_NAME}.tar.gz
