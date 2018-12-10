@@ -49,4 +49,4 @@ if [ "${LOCAL_IMAGE_STREAM_NAMESPACE}" != "openshift" ]; then
     --namespace=${LOCAL_IMAGE_STREAM_NAMESPACE}
 fi
 
-oc rollout resume dc nexus3
+oc rollout resume dc ${APP_NAME}
