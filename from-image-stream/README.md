@@ -27,6 +27,8 @@ Note: if you can reach the destination cluster from your local machine, there's 
 
 # Prepare to connect to Docker using a not trusted certificate in RHEL
 
+The command below will connect to the master host of an openshift installation using ssl and show the chain of certificates sent by the remote server.
+
 ```
 $ openssl s_client -connect master.serverless-e442.openshiftworkshop.com:443 -showcerts 2>&1 < /dev/null
 CONNECTED(00000003)
