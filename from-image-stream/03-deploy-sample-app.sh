@@ -33,15 +33,11 @@ IMAGE_STREAM_NAME=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.metadata.name')
 
 IMAGE_OBJ_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.spec.tags[] | select(.from.kind == "DockerImage") | @base64')
 
-declare -a image_arr=(${IMAGE_OBJ_LIST})
+IMAGE_OBJ_ARR=(${IMAGE_OBJ_LIST})
 
-LAST_OBJ_IMAGE=${image_arr[-1]}
+LAST_OBJ_IMAGE=${IMAGE_OBJ_ARR[-1]}
 
 TAG=$(echo ${LAST_OBJ_IMAGE} | base64 --decode | jq -r '.name')
-
-oc new-app ${LOCAL_IMAGE_STREAM_NAMESPACE}/${IMAGE_STREAM_NAME}:${TAG}~${GIT_URL} ${CONTEXT_DIR_PARAM} --name ${APP_NAME} -n ${NAMESPACE}
-oc expose svc ${APP_NAME}
-oc rollout pause dc ${APP_NAME}
 
 if [ "${LOCAL_IMAGE_STREAM_NAMESPACE}" != "openshift" ]; then
   oc policy add-role-to-user \
@@ -49,10 +45,5 @@ if [ "${LOCAL_IMAGE_STREAM_NAMESPACE}" != "openshift" ]; then
     --namespace=${LOCAL_IMAGE_STREAM_NAMESPACE}
 fi
 
-oc rollout resume dc ${APP_NAME}
-
-echo "If you get an error like: pulling image error : unauthorized: authentication required..."
-echo "Please run:"
-echo oc policy add-role-to-user \
-    system:image-puller system:serviceaccounts:${NAMESPACE}:default \
-    --namespace=${LOCAL_IMAGE_STREAM_NAMESPACE}
+oc new-app ${LOCAL_IMAGE_STREAM_NAMESPACE}/${IMAGE_STREAM_NAME}:${TAG}~${GIT_URL} ${CONTEXT_DIR_PARAM} --name ${APP_NAME} -n ${NAMESPACE}
+oc expose svc ${APP_NAME}
