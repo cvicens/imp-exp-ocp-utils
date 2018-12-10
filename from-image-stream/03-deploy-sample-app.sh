@@ -29,11 +29,17 @@ if [ "${_NAMESPACE}" != "${NAMESPACE}" ]; then
   exit 1
 fi
 
-IMAGE_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.spec.tags[] | select(.from.kind == "DockerImage") | .from.name')
-LAST_IMAGE=$(echo ${IMAGE_LIST} | awk '{print $(NF)}')
-IMAGE_NAME=$(echo ${LAST_IMAGE} | awk -F'/' '{print $3}')
+IMAGE_STREAM_NAME=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.metadata.name')
 
-oc new-app ${LOCAL_IMAGE_STREAM_NAMESPACE}/${IMAGE_NAME}~${GIT_URL} ${CONTEXT_DIR_PARAM} --name ${APP_NAME} -n ${NAMESPACE}
+IMAGE_OBJ_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.spec.tags[] | select(.from.kind == "DockerImage") | @base64')
+
+declare -a image_arr=(${IMAGE_OBJ_LIST})
+
+LAST_OBJ_IMAGE=${image_arr[-1]}
+
+TAG=$(echo ${LAST_OBJ_IMAGE} | base64 --decode | jq -r '.name')
+
+oc new-app ${LOCAL_IMAGE_STREAM_NAMESPACE}/${IMAGE_STREAM_NAME}:${TAG}~${GIT_URL} ${CONTEXT_DIR_PARAM} --name ${APP_NAME} -n ${NAMESPACE}
 oc expose svc ${APP_NAME}
 oc rollout pause dc ${APP_NAME}
 

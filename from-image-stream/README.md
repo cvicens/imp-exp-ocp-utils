@@ -170,6 +170,12 @@ $ openssl verify caroot.crt
 caroot.crt: OK
 ```
 
+Restart Docker
+
+```
+$ systemctl restart docker
+```
+
 # Push images to the local Openshift registry
 
 Once in the destination machine, make sure pre-requisites (yq and jq binaries installed and in PATH) are met before going on.

@@ -35,13 +35,9 @@ docker login $REGISTRY_URL -u $(oc whoami) -p $(oc whoami -t)
 
 IMAGE_STREAM_NAME=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.metadata.name')
 
-IMAGE_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.spec.tags[] | select(.from.kind == "DockerImage") | .from.name')
-
 IMAGE_OBJ_LIST=$(cat ${FROM_IMAGE_STREAM_FILE} | jq -r '.spec.tags[] | select(.from.kind == "DockerImage") | @base64')
 
 declare -a image_arr=(${IMAGE_OBJ_LIST})
-
-echo "image_arr: ${image_arr}"
 
 ## now loop through the above array
 for i in ${image_arr[@]}
@@ -56,7 +52,7 @@ do
    FILE_NAME=$(echo ${FULL_IMAGE_NAME} | sed 's@/@_@g' | sed 's@:@__@g')
    echo "FILE_NAME ${FILE_NAME}"
 
-   IMAGE_NAME=$(echo ${FULL_IMAGE_NAME} |base64 --decode | awk -F'/' '{print $3}')
+   IMAGE_NAME=$(echo ${FULL_IMAGE_NAME} | awk -F'/' '{print $3}')
    echo "IMAGE_NAME ${IMAGE_NAME}"
 
    tar zxvf ${FILE_NAME}.tar.gz
