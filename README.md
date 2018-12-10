@@ -9,7 +9,7 @@ Install jq
 **Mac OS**
 
 ```
-pip install yq
+pip install jq
 ```
 
 **Linux**

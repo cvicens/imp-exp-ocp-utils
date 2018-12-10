@@ -178,7 +178,7 @@ $ systemctl restart docker
 
 # Push images to the local Openshift registry
 
-Once in the destination machine, make sure pre-requisites (yq and jq binaries installed and in PATH) are met before going on.
+Once in the destination machine, make sure pre-requisites (jq binary installed and in PATH) are met before going on.
 
 Login as an admin user, then run our `02-push-remote-images.sh` providing the name of the image-stream file and the name of the destination namespace where we want to have our image-stream (if the namespace is not `openshift` then you have to give permissions to pull images from that namespace).
 
