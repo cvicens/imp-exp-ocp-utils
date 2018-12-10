@@ -50,3 +50,9 @@ if [ "${LOCAL_IMAGE_STREAM_NAMESPACE}" != "openshift" ]; then
 fi
 
 oc rollout resume dc ${APP_NAME}
+
+echo "If you get an error like: pulling image error : unauthorized: authentication required..."
+echo "Please run:"
+echo oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:${NAMESPACE}:default \
+    --namespace=${LOCAL_IMAGE_STREAM_NAMESPACE}
